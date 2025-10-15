@@ -148,6 +148,7 @@ class Guruh:
             return f"{self} guruhida talabalar yo‘q."
         yoshlar = [t.get_yosh() for t in self.talabalar]
         return f"{self} guruh o‘rtacha yoshi: {sum(yoshlar)//len(yoshlar)}"
+            
 
     def show_students(self):
         # Guruhdagi talabalarni ko'rsatadi
@@ -264,6 +265,11 @@ class Fakultet:
 
 # print(guruh1.get_talabalar())
 
+# print()
+# guruh1.talaba_ochirish(talaba1.get_idraqam())
+
+# print(guruh1.talabalar)
+
 # guruh2 = Guruh("3-23-S")
 # guruh2.talaba_qoshish(talaba1, talaba2, talaba1, talaba4)
 
@@ -273,8 +279,8 @@ class Fakultet:
 # fakultet1 = Fakultet("Iqtisod")
 # fakultet2 = Fakultet("IT")
 
-# fakultet1.guruh_qoshish(guruh3, guruh1)
-# fakultet1.guruh_qoshish(guruh3, guruh1, guruh2)
+# fakultet1.guruh_qoshish(guruh2, guruh1)
+# fakultet1.guruh_qoshish(guruh1, guruh2)
 
 # print(fakultet1.get_fakultet_guruhlar())
 # print(fakultet1.get_fakultet_talabalar())
