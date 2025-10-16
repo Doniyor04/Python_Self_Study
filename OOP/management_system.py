@@ -3,8 +3,10 @@ import json # Malumotlarni json formatda saqlash va o'qish uchun
 import pprint # json formatdagi fayllarni konsolda tartibli o'qish uchun
 
 class Talaba:
+
     talabalar_soni = 0
     __talabalar = []
+    
     def __init__(self, ism, yosh, bosqich=1):
         self.ism = ism
         self.yosh = int(yosh)
@@ -88,13 +90,17 @@ class Talaba:
         pprint.pprint(malumot, width=120)
 
 class Guruh:
+
     guruh_soni = 0
     __guruhlar = []
+
     def __init__(self, nomi):
         self.nomi = nomi
         self.talabalar = []
         Guruh.guruh_soni += 1
         Guruh.__guruhlar.append(self)
+
+        self.fakultet = None
 
     def __str__(self):
         return self.nomi
@@ -149,7 +155,6 @@ class Guruh:
         yoshlar = [t.get_yosh() for t in self.talabalar]
         return f"{self} guruh o‘rtacha yoshi: {sum(yoshlar)//len(yoshlar)}"
             
-
     def show_students(self):
         # Guruhdagi talabalarni ko'rsatadi
         if self.talabalar:
@@ -173,11 +178,14 @@ class Guruh:
         pprint.pprint(malumot, width=120)
              
 class Fakultet:
+
     fakultet_soni = 0
     __fakultetlar = []
+
     def __init__(self, nomi):
         self.nomi = nomi
         self.guruhlar = []
+        self.talabalar = []
         Fakultet.__fakultetlar.append(self)
         Fakultet.fakultet_soni += 1
 
@@ -193,7 +201,16 @@ class Fakultet:
             for g in guruhlar:
                 if isinstance(g, Guruh):
                     if g not in self.guruhlar:
-                        self.guruhlar.append(g)
+                        if g.fakultet == None:
+                            self.guruhlar.append(g)
+                            g.fakultet = self
+                        elif g.fakultet == self:
+                            print(f"{g} guruhi bu fakultetda bor")
+                        else:
+                            print(f"{g} guruhi {g.fakultet} fakultetiga tegishli")
+                        for t in g.talabalar:
+                            if t not in self.talabalar:
+                                self.talabalar.append(t)
                         # self.refresh_talabalar()
 
     def guruh_ochirish(self, *guruhlar):
@@ -203,6 +220,9 @@ class Fakultet:
                 if isinstance(g, Guruh):
                     if g in self.guruhlar:
                         self.guruhlar.remove(g)
+                        g.fakultet = None
+                        for t in g.talabalar:
+                            self.talabalar.remove(t)
                     else:
                         return f"{g} guruhi bu fakultetda yo'q"
                 else:
@@ -214,7 +234,6 @@ class Fakultet:
             if g.nomi == g_nomi:
                 return g
         return None
-
                 
     def search_student(self, ism):
         # berilgan ismni fakultetdan (fakultetni talabalar ro'yxatidan) qidiradi va usha talabani malumotini qaytaradi
@@ -224,18 +243,13 @@ class Fakultet:
                     return t.get_info()
             return f"{ism} ismli talaba bu fakultetda yo'q"
 
-
     def get_fakultet_guruhlar(self):
         # fakultetdagi guruh nomlarini ro'yxat qilib qaytaradi
         return [g.nomi for g in self.guruhlar]
             
     def get_fakultet_talabalar(self):
         # fakultetdagi talabalarni infosini olib listga joylab listni qaytaradi
-        talabalar = []
-        for g in self.guruhlar:
-            for t in g.talabalar:
-                talabalar.append(t.get_info())
-        return talabalar
+        return self.talabalar
                 
     def save(self):
         # fakultetning malumotlarini json formatda fayl ochib saqlaydi  
@@ -253,40 +267,3 @@ class Fakultet:
             malumot = json.load(f)
         pprint.pprint(malumot, width=120)
             
-
-# talaba1 = Talaba("doniyor", 21.1, 1)
-# talaba2 = Talaba("alisher", 19, 2)
-# talaba3 = Talaba("otabek", 35, 3)
-# talaba4 = Talaba("abdulla", 18)
-# talaba5 = Talaba("davron", 25)
-
-# guruh1 = Guruh("19-23-S")
-# guruh1.talaba_qoshish(talaba1, talaba2, talaba1)
-
-# print(guruh1.get_talabalar())
-
-# print()
-# guruh1.talaba_ochirish(talaba1.get_idraqam())
-
-# print(guruh1.talabalar)
-
-# guruh2 = Guruh("3-23-S")
-# guruh2.talaba_qoshish(talaba1, talaba2, talaba1, talaba4)
-
-# guruh3 = Guruh("4-19")
-# guruh3.talaba_qoshish(talaba1, talaba3, talaba2)
-
-# fakultet1 = Fakultet("Iqtisod")
-# fakultet2 = Fakultet("IT")
-
-# fakultet1.guruh_qoshish(guruh2, guruh1)
-# fakultet1.guruh_qoshish(guruh1, guruh2)
-
-# print(fakultet1.get_fakultet_guruhlar())
-# print(fakultet1.get_fakultet_talabalar())
-
-# fakultet1.guruh_ochirish(guruh1)
-# print()
-
-# print(fakultet1.get_fakultet_guruhlar())
-# print(fakultet1.get_fakultet_talabalar())
