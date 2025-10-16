@@ -51,6 +51,7 @@ class TalabaTest(unittest.TestCase):
         talaba3.bosqich = talaba3.update_bosqich(4)
         self.assertEqual(f"{talaba3} {talaba3_bosqich}-kursda. Siz {talaba3} kursini maksimum {5-talaba3_bosqich} ta oshira olasiz", talaba3.bosqich)
 
+
 class GuruhTest(unittest.TestCase):
 
     def test_create(self):
@@ -60,6 +61,8 @@ class GuruhTest(unittest.TestCase):
 
         self.assertIsNotNone(guruh1.talabalar)
         self.assertEqual([], guruh1.talabalar)
+
+        self.assertEqual(None, guruh1.fakultet)
 
 
     def test_talaba_qoshish(self):
@@ -102,6 +105,7 @@ class GuruhTest(unittest.TestCase):
         list_info =  [f"{talaba}, {talaba.get_bosqich()}-kurs, ID: {str(talaba.get_idraqam())}, Guruh: {talaba.guruh}" for talaba in guruh1.talabalar]
         self.assertEqual(list_info, guruh1.show_students())
 
+
 class FakultetTest(unittest.TestCase):
 
     def test_create(self):
@@ -117,17 +121,34 @@ class FakultetTest(unittest.TestCase):
         fakultet1.guruh_qoshish(guruh1, guruh2, guruh1)
         self.assertEqual([guruh1, guruh2], fakultet1.guruhlar)
 
+        fakultet2.guruh_qoshish(guruh1)
+        self.assertEqual(fakultet1, guruh1.fakultet)
+
         fakultet1.guruh_ochirish(guruh1, guruh2)
         self.assertEqual([], fakultet1.guruhlar)
-        
+        self.assertEqual(None, guruh1.fakultet and guruh2.fakultet)
+
 
     def test_guruh_topish(self):
         self.assertEqual(None, fakultet1.guruh_topish(guruh1))
 
         fakultet1.guruh_qoshish(guruh1)
-        self.assertEqual(guruh1, fakultet1.guruh_topish(guruh1.nomi))
+        self.assertEqual(guruh1, fakultet1.guruh_topish('19-23-S'))
         fakultet1.guruh_ochirish(guruh1)
     
+
+    def test_search_student(self):
+    
+        talaba5 = Talaba('Botir', 32, 2)
+        talaba6 = Talaba('Sobir', 19, 4)
+
+        guruh4 = Guruh('17-15-G')
+
+        guruh4.talaba_qoshish(talaba5, talaba6)
+        fakultet1.guruh_qoshish(guruh4)
+
+        self.assertEqual("Doniyor ismli talaba bu fakultetda yo'q", fakultet1.search_student('Doniyor'))
+        self.assertEqual(talaba5.get_info(), fakultet1.search_student('Botir'))
 
 
 if __name__ == '__main__':
